@@ -53,6 +53,13 @@ class Resque_Tests_DsnTest extends Resque_Tests_TestCase
 				false, false,
 				array(),
 			)),
+			array('redis://foobar/', array(
+				'foobar',
+				Resque_Redis::DEFAULT_PORT,
+				false,
+				false, false,
+				array(),
+			)),
 			array('redis://foobar:1234', array(
 				'foobar',
 				1234,
@@ -147,10 +154,9 @@ class Resque_Tests_DsnTest extends Resque_Tests_TestCase
 	public function bogusDsnStringProvider()
 	{
 		return array(
-			'http://foo.bar/',
-			'://foo.bar/',
-			'user:@foobar:1234?x=y&a=b',
-			'foobar:1234?x=y&a=b',
+			array('http://foo.bar/'),
+			array('user:@foobar:1234?x=y&a=b'),
+			array('foobar:1234?x=y&a=b'),
 		);
 	}
 
@@ -159,8 +165,7 @@ class Resque_Tests_DsnTest extends Resque_Tests_TestCase
 	 */
 	public function testParsingValidDsnString($dsn, $expected)
 	{
-		$resqueRedis = new Resque_Redis('localhost');
-		$result = $resqueRedis->parseDsn($dsn);
+		$result = Resque_Redis::parseDsn($dsn);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -170,9 +175,8 @@ class Resque_Tests_DsnTest extends Resque_Tests_TestCase
 	 */
 	public function testParsingBogusDsnStringThrowsException($dsn)
 	{
-		$resqueRedis = new Resque_Redis('localhost');
 		// The next line should throw an InvalidArgumentException
-		$result = $resqueRedis->parseDsn($dsn);
+		$result = Resque_Redis::parseDsn($dsn);
 	}
 
 }
